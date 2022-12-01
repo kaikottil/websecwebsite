@@ -10,6 +10,12 @@ def hello_world():  # put application's code here
     resp.headers['X-XSS-Protection'] = '0'
     return resp
 
+@app.route('/login')
+def login():  # put application's code here
+    resp = make_response(render_template('login.html'))
+    # fix comment below line
+    resp.headers['X-XSS-Protection'] = '0'
+    return resp
 
 if __name__ == '__main__':
     app.run()

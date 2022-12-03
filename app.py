@@ -1,6 +1,17 @@
 from flask import Flask, render_template, make_response, request
-
+import requests, json
 app = Flask(__name__)
+
+
+def is_human(captcha_response):
+    """ Validating recaptcha response from google server
+        Returns True captcha test passed for submitted form else returns False.
+    """
+    secret = "6LdiNFAjAAAAAO1cx2-ARSzhyRqYcqBu_RDYeEm6"
+    payload = {'response':captcha_response, 'secret':secret}
+    response = requests.post("https://www.google.com/recaptcha/api/siteverify", payload)
+    response_text = json.loads(response.text)
+    return response_text['success']
 
 
 @app.route('/')
@@ -12,8 +23,29 @@ def hello_world():
     return resp
 
 @app.route('/login')
-def login():
-    resp = make_response(render_template('login.html'))
+def login():  # put application's code here
+    resp = make_response(render_template('form.html'))
+    # fix comment below line
+    resp.headers['X-XSS-Protection'] = '0'
+    print("landing page loaded")
+    return resp
+
+@app.route('/loginPage', methods=["GET", "POST"])
+def loginPage():  # put application's code here
+    captcha_response = request.args.get('g-recaptcha-response')
+    print(captcha_response)
+
+    if is_human(captcha_response):
+        # Process request here
+        status = "Detail submitted successfully."
+        resp = make_response(render_template('login.html'))
+    else:
+        # Log invalid attempts
+        status = "Sorry ! Bots are not allowed."
+        resp = make_response(render_template('error.html'))
+
+    #resp = make_response(render_template('login.html'))
+    # fix comment below line
     resp.headers['X-XSS-Protection'] = '0'
     print("login page loaded")
     return resp

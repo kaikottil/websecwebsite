@@ -1,5 +1,7 @@
 from flask import Flask, render_template, make_response, request
-import requests, json
+import requests
+import json
+
 app = Flask(__name__)
 
 
@@ -8,7 +10,7 @@ def is_human(captcha_response):
         Returns True captcha test passed for submitted form else returns False.
     """
     secret = "6LdiNFAjAAAAAO1cx2-ARSzhyRqYcqBu_RDYeEm6"
-    payload = {'response':captcha_response, 'secret':secret}
+    payload = {'response': captcha_response, 'secret': secret}
     response = requests.post("https://www.google.com/recaptcha/api/siteverify", payload)
     response_text = json.loads(response.text)
     return response_text['success']
@@ -22,6 +24,7 @@ def hello_world():
     print("landing page loaded")
     return resp
 
+
 @app.route('/login')
 def login():  # put application's code here
     resp = make_response(render_template('form.html'))
@@ -30,8 +33,9 @@ def login():  # put application's code here
     print("landing page loaded")
     return resp
 
+
 @app.route('/loginPage', methods=["GET", "POST"])
-def loginPage():  # put application's code here
+def loginpage():  # put application's code here
     captcha_response = request.args.get('g-recaptcha-response')
     print(captcha_response)
 
@@ -48,6 +52,7 @@ def loginPage():  # put application's code here
     # fix comment below line
     resp.headers['X-XSS-Protection'] = '0'
     print("login page loaded")
+    print(status)
     return resp
 
 @app.route('/loginCheck', methods=["GET", "POST"])
@@ -68,5 +73,7 @@ def checkBot():
     resp = make_response(render_template('checkbot.html'))
     return resp
 
+
 if __name__ == '__main__':
     app.run()
+

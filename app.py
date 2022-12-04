@@ -37,7 +37,7 @@ def login():  # put application's code here
     return resp
 
 
-@app.route('/loginPage', methods=["GET", "POST"])
+@app.route('/loginpage', methods=["GET", "POST"])
 def loginpage():  # put application's code here
     captcha_response = request.args.get('g-recaptcha-response')
     print(captcha_response)

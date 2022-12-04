@@ -6,7 +6,7 @@ from time import time
 
 app = Flask(__name__)
 start_time = 0
-
+honeypot_var = "NO"
 
 def is_human(captcha_response):
     """ Validating recaptcha response from google server
@@ -60,10 +60,13 @@ def loginpage():  # put application's code here
 
 @app.route('/loginCheck', methods=["GET", "POST"])
 def loginCheck():
+    global honeypot_var
     UserName = request.args.get('email')
     pswd = request.args.get('pwd')
     honey = request.args.get('honeypot')
     print('honeypot tag: ', honey)
+    if(honey=="on"):
+        honeypot_var="YES"
     print(request)
     if (UserName=="user@bot.com" and pswd=="temp1234"):
         return redirect(url_for('item'))
@@ -83,6 +86,7 @@ def item():
 @app.route('/checkbot', methods=["POST"])
 def checkBot():
     global start_time
+    global honeypot_var
 
     time_elapsed = time() - start_time
     fingerprint = request.form['fingerprint']
@@ -94,6 +98,7 @@ def checkBot():
     print(request.user_agent)
     print(iswebdriver)
     print(time_elapsed)
+    print(honeypot_var)
 
     resp = make_response(render_template('checkbot.html'))
     return resp

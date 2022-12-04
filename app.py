@@ -62,6 +62,8 @@ def loginpage():  # put application's code here
 def loginCheck():
     UserName = request.args.get('email')
     pswd = request.args.get('pwd')
+    honey = request.args.get('honeypot')
+    print('honeypot tag: ', honey)
     print(request)
     if (UserName=="user@bot.com" and pswd=="temp1234"):
         return redirect(url_for('item'))

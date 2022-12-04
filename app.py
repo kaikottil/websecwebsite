@@ -1,8 +1,11 @@
-from flask import Flask, render_template, make_response, request
 import requests
 import json
+from flask import Flask, render_template, make_response, request
+from flask import redirect, url_for
+from time import time
 
 app = Flask(__name__)
+start_time = 0
 
 
 def is_human(captcha_response):
@@ -59,21 +62,41 @@ def loginpage():  # put application's code here
 def loginCheck():
     UserName = request.args.get('email')
     pswd = request.args.get('pwd')
-    print(UserName)
-    print(pswd)
+    print(request)
     if (UserName=="user@bot.com" and pswd=="temp1234"):
-        resp = make_response(render_template('item.html'))
-        return resp
+        return redirect(url_for('item'))
     else:
         resp = make_response(render_template('error.html'))
         return resp
 
-@app.route('/checkbot', methods=["GET"])
+@app.route('/item', methods=["GET"])
+def item():
+    global start_time
+
+    start_time = time()
+    resp = make_response(render_template('item.html'))
+    return resp
+
+
+@app.route('/checkbot', methods=["POST"])
 def checkBot():
+    global start_time
+
+    time_elapsed = time() - start_time
+    fingerprint = request.form['fingerprint']
+    iswebdriver = request.form['webdriver']
+    
+    # Loading page where we process the information
+    print(fingerprint)
+    print(request.remote_addr)
+    print(request.user_agent)
+    print(iswebdriver)
+    print(time_elapsed)
+
     resp = make_response(render_template('checkbot.html'))
     return resp
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
